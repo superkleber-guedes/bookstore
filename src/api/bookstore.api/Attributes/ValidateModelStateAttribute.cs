@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace IO.Swagger.Attributes
+namespace Kleber.Bookstore.Attributes
 {
     /// <summary>
     /// Model state validation attribute
@@ -18,7 +18,6 @@ namespace IO.Swagger.Attributes
         /// <param name="context"></param>
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            // Per https://blog.markvincze.com/how-to-validate-action-parameters-with-dataannotation-attributes/
             var descriptor = context.ActionDescriptor as ControllerActionDescriptor;
             if (descriptor != null)
             {

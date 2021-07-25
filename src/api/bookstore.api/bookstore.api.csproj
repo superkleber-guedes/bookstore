@@ -16,6 +16,6 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="5.5.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\bookstore.models\bookstore.models.csproj" />
+    <ProjectReference Include="..\bookstore.models\bookstore.Models.csproj" />
   </ItemGroup>
 </Project>

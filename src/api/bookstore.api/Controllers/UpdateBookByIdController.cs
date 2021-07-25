@@ -11,13 +11,13 @@ using Microsoft.AspNetCore.Authorization;
 using Kleber.Bookstore.Models;
 
 namespace Kleber.Bookstore.Controllers
-{ 
+{
     /// <summary>
-    /// 
+    /// Update an existing book
     /// </summary>
     [ApiController]
-    public class DefaultApiController : ControllerBase
-    { 
+    public class UpdateBookByIdController : ControllerBase
+    {
         /// <summary>
         /// Update an existing book
         /// </summary>
@@ -31,18 +31,9 @@ namespace Kleber.Bookstore.Controllers
         [ValidateModelState]
         [SwaggerOperation("UpdateBookById")]
         [SwaggerResponse(statusCode: 400, type: typeof(InlineResponse400), description: "Bad Request")]
-        public virtual IActionResult UpdateBookById([FromBody]Book body, [FromRoute][Required]long? id)
-        { 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200);
-
-            //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(400, default(InlineResponse400));
-
-            //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(404);
-
-            throw new NotImplementedException();
+        public virtual IActionResult UpdateBookById([FromBody] Book body, [FromRoute][Required] long? id)
+        {
+            return StatusCode(404);
         }
     }
 }
