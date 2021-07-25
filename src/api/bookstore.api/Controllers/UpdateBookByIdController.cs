@@ -5,6 +5,9 @@ using System.ComponentModel.DataAnnotations;
 using Kleber.Bookstore.Attributes;
 using Kleber.Bookstore.Models;
 using bookstore.CommandHandlers;
+using bookstore.CommandHandlers.Commands;
+using bookstore.Infrastructure.Exceptions;
+using System.Threading.Tasks;
 
 namespace Kleber.Bookstore.Controllers
 {
@@ -37,10 +40,28 @@ namespace Kleber.Bookstore.Controllers
         [Route("/books/{id}")]
         [ValidateModelState]
         [SwaggerOperation("UpdateBookById")]
-        [SwaggerResponse(statusCode: 400, type: typeof(InlineResponse400), description: "Bad Request")]
-        public virtual IActionResult UpdateBookById([FromBody] Book body, [FromRoute][Required] long? id)
+        [SwaggerResponse(statusCode: 400, type: typeof(BadRequestResponse), description: "Bad Request")]
+        public async Task<IActionResult> UpdateBookById([FromBody] Book body, [FromRoute][Required] long? id)
         {
-            return StatusCode(404);
+            if (id is null) return StatusCode(400, new BadRequestResponse("'Id' is required."));
+            if (body.Price is null) return StatusCode(400, new BadRequestResponse("'Price' is required."));
+
+            try
+            {
+                UpdateBookCommand command = new UpdateBookCommand(
+                    id.Value,
+                    body.Title,
+                    body.Author,
+                    body.Price.Value);
+
+                await _commandHandler.HandleAsync(command);
+
+                return StatusCode(200);
+            }
+            catch (ResourceNotFoundException)
+            {
+                return StatusCode(404);
+            }
         }
     }
 }

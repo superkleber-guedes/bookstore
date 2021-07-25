@@ -1,5 +1,4 @@
 ﻿using bookstore.Integration;
-using System;
 using System.Threading.Tasks;
 
 namespace bookstore.CommandHandlers
@@ -13,9 +12,9 @@ namespace bookstore.CommandHandlers
             _repository = repository;
         }
 
-        public Task HandleAsync(long id)
+        public async Task HandleAsync(long id)
         {
-            throw new NotImplementedException();
+            await _repository.DeleteAsync(id);
         }
     }
 }

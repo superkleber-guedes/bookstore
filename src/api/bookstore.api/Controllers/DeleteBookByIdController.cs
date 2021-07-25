@@ -4,6 +4,8 @@ using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using Kleber.Bookstore.Attributes;
 using bookstore.CommandHandlers;
+using bookstore.Infrastructure.Exceptions;
+using System.Threading.Tasks;
 
 namespace Kleber.Bookstore.Controllers
 {
@@ -34,9 +36,18 @@ namespace Kleber.Bookstore.Controllers
         [Route("/books/{id}")]
         [ValidateModelState]
         [SwaggerOperation("DeleteBookById")]
-        public virtual IActionResult DeleteBookById([FromRoute][Required] long? id)
+        public async Task<IActionResult> DeleteBookById([FromRoute][Required] long id)
         {
-            return StatusCode(404);
+            try
+            {
+                await _commandHandler.HandleAsync(id);
+
+                return StatusCode(200);
+            }
+            catch (ResourceNotFoundException)
+            {
+                return StatusCode(404);
+            }
         }
     }
 }

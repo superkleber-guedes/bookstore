@@ -14,9 +14,15 @@ namespace bookstore.CommandHandlers
             _repository = repository;
         }
 
-        public Task HandleAsync(UpdateBookCommand command)
+        public async Task HandleAsync(UpdateBookCommand command)
         {
-            throw new NotImplementedException();
+            Domain.Book updateBook = new Domain.Book(
+                command.Id,
+                command.Title,
+                command.Author,
+                command.Price);
+
+            await _repository.SaveAsync(updateBook);
         }
     }
 }

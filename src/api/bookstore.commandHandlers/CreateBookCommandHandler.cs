@@ -14,9 +14,17 @@ namespace bookstore.CommandHandlers
             _repository = repository;
         }
 
-        public Task<long> HandleAsync(CreateBookCommand command)
+        public async Task<long> HandleAsync(CreateBookCommand command)
         {
-            throw new NotImplementedException();
+            Domain.Book newBook = new Domain.Book(
+                command.Id,
+                command.Title,
+                command.Author,
+                command.Price);
+
+            await _repository.SaveAsync(newBook);
+
+            return newBook.BookId;
         }
     }
 }

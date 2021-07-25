@@ -3,6 +3,8 @@ using Swashbuckle.AspNetCore.Annotations;
 using Kleber.Bookstore.Attributes;
 using Kleber.Bookstore.Models;
 using bookstore.CommandHandlers;
+using bookstore.CommandHandlers.Commands;
+using System.Threading.Tasks;
 
 namespace Kleber.Bookstore.API.Controllers
 {
@@ -13,7 +15,7 @@ namespace Kleber.Bookstore.API.Controllers
     public class CreateBookController : ControllerBase
     {
         private readonly ICreateBookCommandHandler _commandHandler;
-        
+
         /// <summary>
         /// Controller constuctor
         /// </summary>
@@ -33,12 +35,22 @@ namespace Kleber.Bookstore.API.Controllers
         [Route("/books")]
         [ValidateModelState]
         [SwaggerOperation("CreateBook")]
-        [SwaggerResponse(statusCode: 201, type: typeof(InlineResponse201), description: "Created")]
-        [SwaggerResponse(statusCode: 400, type: typeof(InlineResponse400), description: "Bad Request")]
-        public virtual IActionResult CreateBook([FromBody] Book body)
+        [SwaggerResponse(statusCode: 201, type: typeof(CreatedResponse), description: "Created")]
+        [SwaggerResponse(statusCode: 400, type: typeof(BadRequestResponse), description: "Bad Request")]
+        public async Task<IActionResult> CreateBook([FromBody] Book body)
         {
-            return StatusCode(201, default(InlineResponse201));
+            if (body.Id is null) return StatusCode(400, new BadRequestResponse("'Id' is required."));
+            if (body.Price is null) return StatusCode(400, new BadRequestResponse("'Price' is required."));
 
+            CreateBookCommand command = new CreateBookCommand(
+                body.Id.Value,
+                body.Title,
+                body.Author,
+                body.Price.Value);
+
+            var idCreated = await _commandHandler.HandleAsync(command);
+
+            return StatusCode(201, new CreatedResponse(idCreated));
         }
     }
 }
