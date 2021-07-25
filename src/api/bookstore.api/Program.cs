@@ -24,6 +24,8 @@ namespace Kleber.Bookstore
         /// <returns>IWebHostBuilder</returns>
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+                .UseStartup<Startup>()
+                .ConfigureServices(DependencyRegistration.ConfigureStaticDependencies)
+                .ConfigureServices(DependencyRegistration.ConfigureProductionDependencies);
     }
 }

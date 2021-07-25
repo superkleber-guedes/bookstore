@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using Kleber.Bookstore.Attributes;
 using Kleber.Bookstore.Models;
+using bookstore.QueryHandlers;
 
 namespace Kleber.Bookstore.Controllers
 {
@@ -13,14 +14,25 @@ namespace Kleber.Bookstore.Controllers
     [ApiController]
     public class GetBookByIdController : ControllerBase
     {
+        private readonly IGetBookByIdQueryHandler _commandHandler;
+
         /// <summary>
-        /// Gets a book by id
+        /// Controller constuctor
         /// </summary>
-        /// <param name="id"></param>
-        /// <response code="200">Success</response>
-        /// <response code="404">Book not found</response>
+        /// <param name="commandHandler"></param>
+        public GetBookByIdController(IGetBookByIdQueryHandler commandHandler)
+        {
+            _commandHandler = commandHandler;
+        }
+        
+        /// <summary>
+         /// Gets a book by id
+         /// </summary>
+         /// <param name="id"></param>
+         /// <response code="200">Success</response>
+         /// <response code="404">Book not found</response>
         [HttpGet]
-        [Route("//books/{id}")]
+        [Route("/books/{id}")]
         [ValidateModelState]
         [SwaggerOperation("GetBookById")]
         [SwaggerResponse(statusCode: 200, type: typeof(Book), description: "Success")]

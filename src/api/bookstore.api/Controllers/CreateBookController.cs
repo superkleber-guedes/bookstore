@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Kleber.Bookstore.Attributes;
 using Kleber.Bookstore.Models;
+using bookstore.CommandHandlers;
 
 namespace Kleber.Bookstore.API.Controllers
 {
@@ -11,6 +12,17 @@ namespace Kleber.Bookstore.API.Controllers
     [ApiController]
     public class CreateBookController : ControllerBase
     {
+        private readonly ICreateBookCommandHandler _commandHandler;
+        
+        /// <summary>
+        /// Controller constuctor
+        /// </summary>
+        /// <param name="commandHandler"></param>
+        public CreateBookController(ICreateBookCommandHandler commandHandler)
+        {
+            _commandHandler = commandHandler;
+        }
+
         /// <summary>
         /// Creates a new book
         /// </summary>
@@ -18,7 +30,7 @@ namespace Kleber.Bookstore.API.Controllers
         /// <response code="201">Created</response>
         /// <response code="400">Bad Request</response>
         [HttpPost]
-        [Route("//books")]
+        [Route("/books")]
         [ValidateModelState]
         [SwaggerOperation("CreateBook")]
         [SwaggerResponse(statusCode: 201, type: typeof(InlineResponse201), description: "Created")]

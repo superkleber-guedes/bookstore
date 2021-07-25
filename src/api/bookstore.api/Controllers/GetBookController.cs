@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Kleber.Bookstore.Attributes;
 using Kleber.Bookstore.Models;
+using bookstore.QueryHandlers;
 
 namespace Kleber.Bookstore.Controllers
 {
@@ -12,13 +13,24 @@ namespace Kleber.Bookstore.Controllers
     [ApiController]
     public class GetBookController : ControllerBase
     {
+        private readonly IGetBooksQueryHandler _commandHandler;
+
+        /// <summary>
+        /// Controller constuctor
+        /// </summary>
+        /// <param name="commandHandler"></param>
+        public GetBookController(IGetBooksQueryHandler commandHandler)
+        {
+            _commandHandler = commandHandler;
+        }
+
         /// <summary>
         /// Returns a list of books. Sorted by title by default.
         /// </summary>
         /// <param name="sortby"></param>
         /// <response code="200">Success</response>
         [HttpGet]
-        [Route("//books")]
+        [Route("/books")]
         [ValidateModelState]
         [SwaggerOperation("GetBook")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<Book>), description: "Success")]
