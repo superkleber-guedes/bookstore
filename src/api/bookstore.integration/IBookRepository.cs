@@ -7,9 +7,9 @@ namespace bookstore.Integration
 {
     public interface IBookRepository
     {
-        Task<Book> GetByIdAsync(Guid id);
-        Task<IEnumerable<Book>> GetBooks(string sortBy);
+        Task<Book> GetByIdAsync(long id);
+        Task<IEnumerable<Book>> GetBooks(string sortBy, int pageSize, int pageNumber);
         Task SaveAsync(Book entity);
-        Task DeleteAsync(Guid id);
+        Task DeleteAsync(long id);
     }
 }

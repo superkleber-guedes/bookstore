@@ -7,13 +7,16 @@ namespace bookstore.Domain
         [JsonConstructor]
         public Book(long id, string title, string author, decimal price)
         {
-            Id = id;
+            BookId = id;
             Title = title;
             Author = author;
             Price = price;
         }
 
-        public long Id { get; }
+        [JsonProperty("id")]
+        public string Id { get { return BookId.ToString(); } }
+        [JsonProperty("BookId")]
+        public long BookId { get; }
         public string Title { get; }
         public string Author { get; }
         public decimal Price { get; }

@@ -17,7 +17,7 @@
 
         public Book FromDomain(Domain.Book book)
         {
-            return new Book(book.Id, book.Title, book.Author, book.Price);
+            return new Book(book.BookId, book.Title, book.Author, book.Price);
         }
     }
 }
