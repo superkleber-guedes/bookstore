@@ -6,7 +6,7 @@ namespace bookstore.QueryHandlers.Queries
     {
         public GetBooksQuery(string sortBy)
         {
-            SortBy = sortBy.ToLower().Trim() switch
+            SortBy = (sortBy?.ToLower()?.Trim() ?? "title") switch
             {
                 "author" => SortBy.Author,
                 "price" => SortBy.Price,

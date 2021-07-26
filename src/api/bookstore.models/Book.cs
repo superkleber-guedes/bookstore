@@ -31,7 +31,7 @@ namespace Kleber.Bookstore.Models
         /// </summary>
 
         [DataMember(Name="id")]
-        public long? Id { get; private set; }
+        public long? Id { get; set; }
 
         /// <summary>
         /// Gets or Sets Title

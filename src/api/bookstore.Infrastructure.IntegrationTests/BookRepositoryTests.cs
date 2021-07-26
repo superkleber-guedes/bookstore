@@ -62,7 +62,7 @@ namespace bookstore.Infrastructure.IntegrationTests
         [InlineData(1, "Winnie-the-Pooh", "A. A. Milne", 19.25)]
         [InlineData(2, "Pride and Prejudice", "Jane Austen", 5.49)]
         [InlineData(3, "Romeo and Juliet", "William Shakespeare", 6.95)]
-        public async Task FeedDatabaseTest(long id, string title, string author, decimal price)
+        public async Task FeedDatabaseSaveAndGetTest(long id, string title, string author, decimal price)
         {
             await CreateDatabaseAndContainerOnFirstRun();
 
@@ -93,13 +93,14 @@ namespace bookstore.Infrastructure.IntegrationTests
             await Assert.ThrowsAsync<ResourceNotFoundException>(() => _bookRepository.GetByIdAsync(newBook.BookId));
         }
 
-        /// <summary>
-        /// FeedDatabaseTest must run before this test, it runs before because xunit orders them alphabetically when all tests run
-        /// </summary>
-        /// <returns></returns>
         [Fact]
         public async Task GetBooksByAuthor()
         {
+            Book newBook = new Book(5000, "Not a worthy book", "A author", 1.50M);
+            await _bookRepository.SaveAsync(newBook);
+            Book newBook2 = new Book(5001, "Not a worthy book", "B Author", 1.50M);
+            await _bookRepository.SaveAsync(newBook2);
+
             var response = (await _bookRepository.GetBooks(Integration.Enums.SortBy.Author)).ToList();
 
             Assert.True(response.Count > 0);
@@ -111,22 +112,9 @@ namespace bookstore.Infrastructure.IntegrationTests
             {
                 Assert.Equal(response[0].Author, reorderedList[0].Author);
             }
-        }
 
-        [Fact]
-        public async Task GetBooksByPrice()
-        {
-            var response = (await _bookRepository.GetBooks(Integration.Enums.SortBy.Price)).ToList();
-
-            Assert.True(response.Count > 0);
-
-            var responseList = response.ToList();
-            var reorderedList = response.OrderBy(o => o.Price).ToList();
-
-            for (int i = 0; i < response.Count; i++)
-            {
-                Assert.Equal(response[0].Price, reorderedList[0].Price);
-            }
+            await _bookRepository.DeleteAsync(5000);
+            await _bookRepository.DeleteAsync(5001);
         }
     }
 }

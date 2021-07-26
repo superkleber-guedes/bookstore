@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Kleber.Bookstore
 {
-    internal class DependencyRegistration
+    public class DependencyRegistration
     {
 
         /// <summary>

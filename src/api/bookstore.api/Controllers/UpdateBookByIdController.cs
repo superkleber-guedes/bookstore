@@ -62,6 +62,10 @@ namespace Kleber.Bookstore.Controllers
             {
                 return StatusCode(404);
             }
+            catch (System.ArgumentException ex)
+            {
+                return StatusCode(400, new BadRequestResponse(ex.Message));
+            }
         }
     }
 }
