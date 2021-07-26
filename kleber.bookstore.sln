@@ -31,7 +31,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bookstore.CommandHandlers.U
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bookstore.QueryHandlers.UnitTests", "src\api\bookstore.QueryHandlers.UnitTests\bookstore.QueryHandlers.UnitTests.csproj", "{EC968080-3C8D-4993-BDE4-A96BD1AE6621}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bookstore.API.ComponentTests", "src\api\bookstore.API.UnitTests\bookstore.API.ComponentTests.csproj", "{B09B4A80-7121-45CF-A920-6C71042C518E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bookstore.API.ComponentTests", "src\api\bookstore.api.ComponentTests\bookstore.API.ComponentTests.csproj", "{B09B4A80-7121-45CF-A920-6C71042C518E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bookstore.Infrastructure.IntegrationTests", "src\api\bookstore.Infrastructure.IntegrationTests\bookstore.Infrastructure.IntegrationTests.csproj", "{ACA1628D-2D07-49CD-97F4-F8286A4CFB0F}"
 EndProject
