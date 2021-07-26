@@ -22,6 +22,7 @@ namespace bookstore.CommandHandlers
                 command.Author,
                 command.Price);
 
+            await _repository.GetByIdAsync(command.Id); //if not found a ResourceNotFound will be thrown
             await _repository.SaveAsync(updateBook);
         }
     }

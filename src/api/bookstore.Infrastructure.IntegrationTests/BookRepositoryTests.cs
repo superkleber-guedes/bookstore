@@ -29,13 +29,13 @@ namespace bookstore.Infrastructure.IntegrationTests
 
             _bookRepository = new BookRepository(repositoryConfiguration);
 
-            //extra - this is not part of a normal integration tests, but I am reusing the tests to build the database and data
+            //extra - this is not part of a normal integration tests, but I am reusing the tests to create database and data
             _createDatabaseAndContainer = config.GetSection("CreateDatabaseAndContainer")?.Get<bool>() ?? false;
         }
 
         /// <summary>
         /// Help code to create database and container by running Integration Tests
-        /// This is just a shortcut to get database and container created for other people running it
+        /// This is just a shortcut to get database and container created for other people running this code
         /// </summary>
         /// <returns></returns>
         private async Task CreateDatabaseAndContainerOnFirstRun()
@@ -95,13 +95,12 @@ namespace bookstore.Infrastructure.IntegrationTests
 
         /// <summary>
         /// FeedDatabaseTest must run before this test, it runs before because xunit orders them alphabetically when all tests run
-        /// I could feed the database and delete, but I am keeping it simple
         /// </summary>
         /// <returns></returns>
         [Fact]
         public async Task GetBooksByAuthor()
         {
-            var response = (await _bookRepository.GetBooks("author", 10, 1)).ToList();
+            var response = (await _bookRepository.GetBooks(Integration.Enums.SortBy.Author)).ToList();
 
             Assert.True(response.Count > 0);
 
@@ -111,6 +110,22 @@ namespace bookstore.Infrastructure.IntegrationTests
             for (int i = 0; i < response.Count; i++)
             {
                 Assert.Equal(response[0].Author, reorderedList[0].Author);
+            }
+        }
+
+        [Fact]
+        public async Task GetBooksByPrice()
+        {
+            var response = (await _bookRepository.GetBooks(Integration.Enums.SortBy.Price)).ToList();
+
+            Assert.True(response.Count > 0);
+
+            var responseList = response.ToList();
+            var reorderedList = response.OrderBy(o => o.Price).ToList();
+
+            for (int i = 0; i < response.Count; i++)
+            {
+                Assert.Equal(response[0].Price, reorderedList[0].Price);
             }
         }
     }

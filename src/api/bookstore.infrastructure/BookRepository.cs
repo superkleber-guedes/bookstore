@@ -8,6 +8,7 @@ using bookstore.Infrastructure.Config;
 using bookstore.Infrastructure.Exceptions;
 using System.Linq;
 using Microsoft.Azure.Cosmos.Linq;
+using bookstore.Integration.Enums;
 
 namespace bookstore.Infrastructure
 {
@@ -38,61 +39,22 @@ namespace bookstore.Infrastructure
             }
         }
 
-        public async Task<IEnumerable<Book>> GetBooks(string sortBy, int pageSize, int pageNumber)
+        public async Task<IEnumerable<Book>> GetBooks(SortBy sortBy)
         {
             try
             {
-                if (pageSize <= 0) throw new OperationFailedException("Page size must be greater than 0");
-                if (pageNumber <= 0) throw new OperationFailedException("Page number must be greater than 0");
-
-                var options = new QueryRequestOptions()
-                {
-                    MaxItemCount = pageSize
-                };
-
-                var collectionQuery = _bookContainer.GetItemLinqQueryable<Book>(true, null, options);
-
-                //this should be done somewhere else
-                switch (sortBy.ToLower().Trim())
-                {
-                    case "author":
-                        {
-                            collectionQuery = collectionQuery.OrderBy(o => o.Author);
-                            break;
-                        }
-                    case "title":
-                        {
-                            collectionQuery = collectionQuery.OrderBy(o => o.Title);
-                            break;
-                        }
-                    case "price":
-                        {
-                            collectionQuery = collectionQuery.OrderBy(o => o.Price);
-                            break;
-                        }
-                    default:
-                        {
-                            collectionQuery = collectionQuery.OrderBy(o => o.BookId);
-                            break;
-                        }
-                }
-                
-                FeedIterator<Book> queryResultSetIterator =
-                    collectionQuery
-                    .Skip((pageNumber - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToFeedIterator();
-
                 List<Book> result = new List<Book>();
-
-                while (queryResultSetIterator.HasMoreResults)
+                string continuationToken = null;
+                do
                 {
-                    var response = await queryResultSetIterator.ReadNextAsync();
+                    var queryResponse = await QueryBooks(sortBy, continuationToken);
+                    if (queryResponse.StatusCode != System.Net.HttpStatusCode.OK)
+                        throw new OperationFailedException("Search operation failed");
 
-                    if (response.StatusCode != System.Net.HttpStatusCode.OK) throw new OperationFailedException("Search operation failed");
-
-                    result.AddRange(response.Resource);
+                    continuationToken = queryResponse.ContinuationToken;
+                    result.AddRange(queryResponse.Resource);
                 }
+                while (!string.IsNullOrEmpty(continuationToken));
 
                 return result;
             }
@@ -100,6 +62,36 @@ namespace bookstore.Infrastructure
             {
                 throw ex;
             }
+        }
+
+        private async Task<FeedResponse<Book>> QueryBooks(SortBy sortBy, string continuationToken = null)
+        {
+            var options = new QueryRequestOptions()
+            {
+                MaxItemCount = 20
+            };
+
+            var collectionQuery = _bookContainer.GetItemLinqQueryable<Book>(true, continuationToken, options);
+
+            collectionQuery = OrderQuery(collectionQuery, sortBy);
+
+            FeedIterator<Book> collectionIterator =
+                    collectionQuery
+                    .ToFeedIterator();
+
+            var response = await collectionIterator.ReadNextAsync();
+
+            return response;
+        }
+
+        private IOrderedQueryable<Book> OrderQuery(IOrderedQueryable<Book> query, SortBy sortBy)
+        {
+            return sortBy switch
+            {
+                SortBy.Author => query.OrderBy(o => o.Author),
+                SortBy.Price => query.OrderBy(o => o.Price),
+                _ => query.OrderBy(o => o.Title)
+            };
         }
 
         public async Task<Book> GetByIdAsync(long id)
