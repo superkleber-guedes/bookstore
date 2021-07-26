@@ -3,6 +3,7 @@ using bookstore.QueryHandlers.Models;
 using bookstore.QueryHandlers.Queries;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace bookstore.QueryHandlers
@@ -16,9 +17,11 @@ namespace bookstore.QueryHandlers
             _repository = repository;
         }
 
-        public Task<IEnumerable<Book>> GetBooks(GetBooksQuery query)
+        public async Task<IEnumerable<Book>> HandleAsync(GetBooksQuery query)
         {
-            throw new NotImplementedException();
+            var queryResponse = await _repository.GetBooks(query.SortBy);
+
+            return queryResponse.Select(Book.FromDomain);
         }
     }
 }

@@ -15,7 +15,7 @@
         public string Author { get; }
         public decimal Price { get; }
 
-        public Book FromDomain(Domain.Book book)
+        public static Book FromDomain(Domain.Book book)
         {
             return new Book(book.BookId, book.Title, book.Author, book.Price);
         }

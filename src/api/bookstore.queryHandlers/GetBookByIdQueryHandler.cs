@@ -14,9 +14,10 @@ namespace bookstore.QueryHandlers
             _repository = repository;
         }
 
-        public Task<Book> GetBookById(long id)
+        public async Task<Book> HandleAsync(long id)
         {
-            throw new NotImplementedException();
+            var result = await _repository.GetByIdAsync(id);
+            return Book.FromDomain(result);
         }
     }
 }

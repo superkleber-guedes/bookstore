@@ -6,6 +6,6 @@ namespace bookstore.QueryHandlers
     public interface IGetBookByIdQueryHandler
     {
         //I could have used IMediator, or even create my own mediator, but decided for simplicity
-        public Task<Book> GetBookById(long id);
+        public Task<Book> HandleAsync(long id);
     }
 }

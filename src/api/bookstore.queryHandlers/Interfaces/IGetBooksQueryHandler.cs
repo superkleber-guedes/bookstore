@@ -8,6 +8,6 @@ namespace bookstore.QueryHandlers
     public interface IGetBooksQueryHandler
     {
         //I could have used IMediator, or even create my own mediator, but decided for simplicity
-        public Task<IEnumerable<Book>> GetBooks(GetBooksQuery query);
+        public Task<IEnumerable<Book>> HandleAsync(GetBooksQuery query);
     }
 }

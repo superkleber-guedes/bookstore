@@ -5,6 +5,8 @@ using System.ComponentModel.DataAnnotations;
 using Kleber.Bookstore.Attributes;
 using Kleber.Bookstore.Models;
 using bookstore.QueryHandlers;
+using bookstore.Infrastructure.Exceptions;
+using System.Threading.Tasks;
 
 namespace Kleber.Bookstore.Controllers
 {
@@ -14,15 +16,15 @@ namespace Kleber.Bookstore.Controllers
     [ApiController]
     public class GetBookByIdController : ControllerBase
     {
-        private readonly IGetBookByIdQueryHandler _commandHandler;
+        private readonly IGetBookByIdQueryHandler _queryHandler;
 
         /// <summary>
         /// Controller constuctor
         /// </summary>
-        /// <param name="commandHandler"></param>
-        public GetBookByIdController(IGetBookByIdQueryHandler commandHandler)
+        /// <param name="queryHandler"></param>
+        public GetBookByIdController(IGetBookByIdQueryHandler queryHandler)
         {
-            _commandHandler = commandHandler;
+            _queryHandler = queryHandler;
         }
         
         /// <summary>
@@ -36,9 +38,17 @@ namespace Kleber.Bookstore.Controllers
         [ValidateModelState]
         [SwaggerOperation("GetBookById")]
         [SwaggerResponse(statusCode: 200, type: typeof(Book), description: "Success")]
-        public virtual IActionResult GetBookById([FromRoute][Required] long? id)
+        public async Task<IActionResult> GetBookById([FromRoute][Required] long id)
         {
-            return StatusCode(404);
+            try
+            {
+                var result = await _queryHandler.HandleAsync(id);
+                return new ObjectResult(result);
+            }
+            catch (ResourceNotFoundException)
+            {
+                return StatusCode(404);
+            }
         }
     }
 }

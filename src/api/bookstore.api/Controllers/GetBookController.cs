@@ -4,6 +4,9 @@ using Swashbuckle.AspNetCore.Annotations;
 using Kleber.Bookstore.Attributes;
 using Kleber.Bookstore.Models;
 using bookstore.QueryHandlers;
+using bookstore.QueryHandlers.Queries;
+using System;
+using System.Threading.Tasks;
 
 namespace Kleber.Bookstore.Controllers
 {
@@ -13,15 +16,15 @@ namespace Kleber.Bookstore.Controllers
     [ApiController]
     public class GetBookController : ControllerBase
     {
-        private readonly IGetBooksQueryHandler _commandHandler;
+        private readonly IGetBooksQueryHandler _queryHandler;
 
         /// <summary>
         /// Controller constuctor
         /// </summary>
-        /// <param name="commandHandler"></param>
-        public GetBookController(IGetBooksQueryHandler commandHandler)
+        /// <param name="queryHandler"></param>
+        public GetBookController(IGetBooksQueryHandler queryHandler)
         {
-            _commandHandler = commandHandler;
+            _queryHandler = queryHandler;
         }
 
         /// <summary>
@@ -34,9 +37,21 @@ namespace Kleber.Bookstore.Controllers
         [ValidateModelState]
         [SwaggerOperation("GetBook")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<Book>), description: "Success")]
-        public virtual IActionResult GetBook([FromQuery] string sortby)
+        [SwaggerResponse(statusCode: 400, type: typeof(BadRequestResponse), description: "Bad Request")]
+        public async Task<IActionResult> GetBook([FromQuery] string sortby)
         {
-            return new ObjectResult(new List<Book>());
+            try
+            {
+                GetBooksQuery query = new GetBooksQuery(sortby);
+
+                var response = await _queryHandler.HandleAsync(query);
+
+                return new ObjectResult(response);
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                return StatusCode(400, new BadRequestResponse(ex.Message));
+            }
         }
     }
 }
